@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class NoteDetailPage extends StatelessWidget {
+class NoteDetailPage extends StatefulWidget {
   final String title;
   final String date;
 
@@ -9,6 +9,63 @@ class NoteDetailPage extends StatelessWidget {
     required this.title,
     required this.date,
   }) : super(key: key);
+
+  @override
+  _NoteDetailPageState createState() => _NoteDetailPageState();
+}
+
+class _NoteDetailPageState extends State<NoteDetailPage> {
+  bool _isBottomSheetVisible = false;
+
+  void _toggleBottomSheet() {
+    if (_isBottomSheetVisible) {
+      Navigator.of(context).pop();
+    } else {
+      _showShareOptions();
+    }
+    setState(() {
+      _isBottomSheetVisible = !_isBottomSheetVisible;
+    });
+  }
+
+  void _showShareOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.image_outlined),
+              title: const Text('Share as Image'),
+              onTap: () {
+                // Define action for "Share as Image"
+                Navigator.pop(context); // Close the bottom sheet
+                setState(() {
+                  _isBottomSheetVisible = false;
+                });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.text_fields),
+              title: const Text('Share as Text'),
+              onTap: () {
+                // Define action for "Share as Text"
+                Navigator.pop(context); // Close the bottom sheet
+                setState(() {
+                  _isBottomSheetVisible = false;
+                });
+              },
+            ),
+          ],
+        );
+      },
+    ).whenComplete(() {
+      // Reset _isBottomSheetVisible when the BottomSheet closes
+      setState(() {
+        _isBottomSheetVisible = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +79,8 @@ class NoteDetailPage extends StatelessWidget {
         actions: [
           // Share icon
           IconButton(
-            icon: const Icon(Icons.share_outlined, color: Colors.grey),
-            onPressed: () {
-              // Define share functionality here
-            },
+            icon: const Icon(Icons.share_outlined, color: Colors.green),
+            onPressed: _toggleBottomSheet, // Toggle the bottom sheet
           ),
           // Three-dot menu
           IconButton(
@@ -52,7 +107,7 @@ class NoteDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              date,
+              widget.date,
               style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -62,7 +117,7 @@ class NoteDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              title,
+              widget.title,
               style: const TextStyle(fontSize: 18, color: Colors.black),
             ),
           ],
@@ -88,7 +143,7 @@ class NoteDetailPage extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.share_outlined, color: Colors.grey),
-                onPressed: () {},
+                onPressed: _toggleBottomSheet, // Toggle the bottom sheet
               ),
             ],
           ),
