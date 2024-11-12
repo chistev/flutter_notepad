@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'note_detail_page.dart';
 
 class NoteListItem extends StatelessWidget {
   final String title;
@@ -22,6 +23,15 @@ class NoteListItem extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: Text(date),
+        onTap: () {
+          // Navigate to the detail page
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NoteDetailPage(title: title, date: date),
+            ),
+          );
+        },
       ),
     );
   }
