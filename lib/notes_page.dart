@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'note_list_item.dart';
 import 'search_bar.dart';
+import 'create_note_page.dart';
+
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -125,7 +127,10 @@ class _NotesPageState extends State<NotesPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Add your note-creation logic here
+            Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateNotePage()),
+    );
           },
           tooltip: 'Add Note',
           child: const Icon(Icons.add),
