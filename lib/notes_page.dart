@@ -25,15 +25,12 @@ class _NotesPageState extends State<NotesPage> {
     {"title": "Top shelf", "date": "15:11 PM, November 8, 2024"},
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  List<Map<String, String>> _filteredNotes = [];
 
   @override
   void initState() {
     super.initState();
+    _filteredNotes = notes;
     _searchController.addListener(_onSearchChanged);
     _searchFocusNode.addListener(() {
       setState(() {
@@ -44,7 +41,14 @@ class _NotesPageState extends State<NotesPage> {
 
   void _onSearchChanged() {
     setState(() {
-      _showEmptyState = _searchFocusNode.hasFocus && _searchController.text.isEmpty;
+      if (_searchController.text.isEmpty) {
+        _filteredNotes = notes;
+      } else {
+        _filteredNotes = notes.where((note) {
+          return note['title']!.toLowerCase().contains(_searchController.text.toLowerCase());
+        }).toList();
+      }
+      _showEmptyState = _filteredNotes.isEmpty;
     });
   }
 
@@ -63,6 +67,13 @@ class _NotesPageState extends State<NotesPage> {
       return Future.value(false); // Don't pop the screen
     }
     return Future.value(true); // Allow the back action if the keyboard is not visible
+  }
+
+  // This is the missing _onItemTapped function that handles bottom nav item tap.
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -91,14 +102,26 @@ class _NotesPageState extends State<NotesPage> {
                 ),
                 const SizedBox(height: 16),
                 _showEmptyState
-                    ? Center(child: Text("", style: TextStyle(color: Colors.grey[600])))
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.search_off, color: Colors.grey[600], size: 48),
+                            const SizedBox(height: 16),
+                            Text(
+                              "No notes",
+                              style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      )
                     : Expanded(
                         child: ListView.builder(
-                          itemCount: notes.length,
+                          itemCount: _filteredNotes.length,
                           itemBuilder: (context, index) {
                             return NoteListItem(
-                              title: notes[index]['title']!,
-                              date: notes[index]['date']!,
+                              title: _filteredNotes[index]['title']!,
+                              date: _filteredNotes[index]['date']!,
                             );
                           },
                         ),
@@ -116,7 +139,7 @@ class _NotesPageState extends State<NotesPage> {
         ),
         bottomNavigationBar: BottomNavBar(
           selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped,
+          onItemTapped: _onItemTapped, // This is now defined
         ),
       ),
     );
