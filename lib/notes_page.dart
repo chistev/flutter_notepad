@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'note_list_item.dart';
 import 'search_bar.dart';
 import 'create_note_page.dart';
-
+import 'package:intl/intl.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -64,12 +64,26 @@ class _NotesPageState extends State<NotesPage> {
   // Handle the back button to dismiss the keyboard
   Future<bool> _onBackPressed() async {
     if (_searchFocusNode.hasFocus) {
-      // Unfocus the search field and dismiss the keyboard
       _searchFocusNode.unfocus();
-      return Future.value(false); // Don't pop the screen
+      return Future.value(false);
     }
-    return Future.value(true); // Allow the back action if the keyboard is not visible
+    return Future.value(true);
   }
+
+  // Function to add a new note at the top of the list
+void _addNewNote(Map<String, String> newNote) {
+  setState(() {
+    // Format the current timestamp using the intl package
+    final formattedDate = DateFormat('hh:mm a, MMMM dd, yyyy').format(DateTime.now());
+
+    _filteredNotes.insert(0, {
+      'title': newNote['title'] ?? '',  // Title (with fallback)
+      'note': newNote['note'] ?? '',    // Note content (with fallback)
+      'date': formattedDate,  // Timestamp formatted as a date
+    });
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +97,7 @@ class _NotesPageState extends State<NotesPage> {
         body: GestureDetector(
           onTap: () {
             if (_searchFocusNode.hasFocus) {
-              FocusScope.of(context).requestFocus(FocusNode());  // Unfocus using FocusScope
+              FocusScope.of(context).requestFocus(FocusNode());
             }
           },
           child: Padding(
@@ -111,26 +125,34 @@ class _NotesPageState extends State<NotesPage> {
                         ),
                       )
                     : Expanded(
-                        child: ListView.builder(
-                          itemCount: _filteredNotes.length,
-                          itemBuilder: (context, index) {
-                            return NoteListItem(
-                              title: _filteredNotes[index]['title']!,
-                              date: _filteredNotes[index]['date']!,
-                            );
-                          },
-                        ),
-                      ),
+  child: ListView.builder(
+    itemCount: _filteredNotes.length,
+    itemBuilder: (context, index) {
+      return NoteListItem(
+        title: _filteredNotes[index]['title'] ?? '', // Provide a fallback if 'title' is null
+        note: _filteredNotes[index]['note'] ?? '',   // Provide a fallback if 'note' is null
+        date: _filteredNotes[index]['date'] ?? '',   // Provide a fallback if 'date' is null
+      );
+    },
+  ),
+),
+
               ],
             ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CreateNotePage()),
-    );
+          onPressed: () async {
+            // Navigate to CreateNotePage and wait for the result
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreateNotePage()),
+            );
+
+            if (result != null) {
+              // Add the new note to the list if data was returned
+              _addNewNote(result);
+            }
           },
           tooltip: 'Add Note',
           child: const Icon(Icons.add),

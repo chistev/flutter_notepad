@@ -14,8 +14,6 @@ class _CreateNotePageState extends State<CreateNotePage> {
   @override
   void initState() {
     super.initState();
-
-    // Add listeners to both controllers to detect changes
     _titleController.addListener(_updateKeywordStatus);
     _noteController.addListener(_updateKeywordStatus);
   }
@@ -23,14 +21,12 @@ class _CreateNotePageState extends State<CreateNotePage> {
   // Update the status based on whether either controller has non-empty trimmed text
   void _updateKeywordStatus() {
     setState(() {
-      // Check if either title or note has non-empty text after trimming whitespace
       _isKeywordEntered = _titleController.text.trim().isNotEmpty || _noteController.text.trim().isNotEmpty;
     });
   }
 
   @override
   void dispose() {
-    // Clean up the controllers when the page is disposed
     _titleController.dispose();
     _noteController.dispose();
     super.dispose();
@@ -42,7 +38,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(),  // Go back without saving
         ),
         title: const Text(
           'Create Note',
@@ -52,13 +48,19 @@ class _CreateNotePageState extends State<CreateNotePage> {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
-          // Display the "tick" icon only if there's text entered (after trimming whitespace)
           if (_isKeywordEntered)
             IconButton(
               icon: const Icon(Icons.check, color: Colors.green),
               onPressed: () {
-                // Add save note logic here if needed
-                print("Note Saved");
+                final title = _titleController.text.trim();
+                final note = _noteController.text.trim();
+                final timestamp = TimeOfDay.now().format(context);
+
+                // Debugging: Print the data being returned
+  print("Title: $title, Note: $note, Timestamp: $timestamp");
+
+                // Pass the note data back to the NotesPage
+                Navigator.pop(context, {'title': title, 'note': note, 'timestamp': timestamp});
               },
             ),
         ],
@@ -68,7 +70,6 @@ class _CreateNotePageState extends State<CreateNotePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Display current time in the format shown in the screenshot
             Text(
               '${TimeOfDay.now().format(context)}',
               style: const TextStyle(color: Colors.grey, fontSize: 16),
