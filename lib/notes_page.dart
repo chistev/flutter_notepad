@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'note_list_item.dart';
-import 'bottom_nav_bar.dart';
 import 'search_bar.dart';
 
 class NotesPage extends StatefulWidget {
@@ -11,11 +10,11 @@ class NotesPage extends StatefulWidget {
 }
 
 class _NotesPageState extends State<NotesPage> {
-  int _selectedIndex = 0;
   final FocusNode _searchFocusNode = FocusNode();
   final TextEditingController _searchController = TextEditingController();
   bool _showEmptyState = false;
 
+  // Sample notes list
   final List<Map<String, String>> notes = [
     {"title": "https://coda.partnerlinks.io/ECNUSInfor...", "date": "16:14 PM, November 11, 2024"},
     {"title": "If I intend on building a notepad mobile a...", "date": "09:32 AM, November 11, 2024"},
@@ -23,6 +22,7 @@ class _NotesPageState extends State<NotesPage> {
     {"title": "Third shelf", "date": "16:58 PM, November 8, 2024"},
     {"title": "Second shelf", "date": "15:21 PM, November 8, 2024"},
     {"title": "Top shelf", "date": "15:11 PM, November 8, 2024"},
+    {"title": "Software Development", "date": "17:47 PM, November 6, 2024"},
   ];
 
   List<Map<String, String>> _filteredNotes = [];
@@ -67,13 +67,6 @@ class _NotesPageState extends State<NotesPage> {
       return Future.value(false); // Don't pop the screen
     }
     return Future.value(true); // Allow the back action if the keyboard is not visible
-  }
-
-  // This is the missing _onItemTapped function that handles bottom nav item tap.
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   @override
@@ -136,10 +129,6 @@ class _NotesPageState extends State<NotesPage> {
           },
           tooltip: 'Add Note',
           child: const Icon(Icons.add),
-        ),
-        bottomNavigationBar: BottomNavBar(
-          selectedIndex: _selectedIndex,
-          onItemTapped: _onItemTapped, // This is now defined
         ),
       ),
     );
