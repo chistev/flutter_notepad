@@ -77,12 +77,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          // Share icon
-          IconButton(
-            icon: const Icon(Icons.share_outlined, color: Colors.green),
-            onPressed: _toggleBottomSheet, // Toggle the bottom sheet
-          ),
-          // Three-dot menu
+          // Three-dot menu (remains)
           IconButton(
             icon: const Icon(Icons.more_vert, color: Colors.grey),
             onPressed: () {
