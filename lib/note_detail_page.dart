@@ -17,58 +17,6 @@ class NoteDetailPage extends StatefulWidget {
 }
 
 class _NoteDetailPageState extends State<NoteDetailPage> {
-  bool _isBottomSheetVisible = false;
-
-  void _toggleBottomSheet() {
-    if (_isBottomSheetVisible) {
-      Navigator.of(context).pop();
-    } else {
-      _showShareOptions();
-    }
-
-    setState(() {
-      _isBottomSheetVisible = !_isBottomSheetVisible;
-    });
-  }
-
-  void _showShareOptions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.image_outlined),
-              title: const Text('Share as Image'),
-              onTap: () {
-                // Define action for "Share as Image"
-                Navigator.pop(context); // Close the bottom sheet
-                setState(() {
-                  _isBottomSheetVisible = false;
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.text_fields),
-              title: const Text('Share as Text'),
-              onTap: () {
-                // Define action for "Share as Text"
-                Navigator.pop(context); // Close the bottom sheet
-                setState(() {
-                  _isBottomSheetVisible = false;
-                });
-              },
-            ),
-          ],
-        );
-      },
-    ).whenComplete(() {
-      setState(() {
-        _isBottomSheetVisible = false;
-      });
-    });
-  }
-
   void _deleteNote() {
     widget.onDelete(); // Call the delete callback
     Navigator.of(context).pop(); // Go back to the previous screen
@@ -88,14 +36,12 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.grey),
+            icon: const Icon(Icons.more_vert, color: Colors.green),
             onPressed: () {
               showMenu(
                 context: context,
                 position: const RelativeRect.fromLTRB(100, 50, 0, 0),
                 items: [
-                  const PopupMenuItem(value: 'option1', child: Text('Option 1')),
-                  const PopupMenuItem(value: 'option2', child: Text('Option 2')),
                   PopupMenuItem(
                     value: 'delete',
                     child: const Text('Delete'),
@@ -152,10 +98,6 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
               IconButton(
                 icon: const Icon(Icons.notifications_outlined, color: Colors.grey),
                 onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.share_outlined, color: Colors.grey),
-                onPressed: _toggleBottomSheet,
               ),
             ],
           ),
