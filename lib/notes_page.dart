@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'notes_page/empty_state.dart';
 import 'notes_page/note_list.dart';
 import 'search_bar.dart';
-
 import 'create_note_page.dart';
 
 class NotesPage extends StatefulWidget {
@@ -76,6 +75,13 @@ class _NotesPageState extends State<NotesPage> {
     });
   }
 
+  // Function to delete a note by index
+  void _deleteNoteAtIndex(int index) {
+    setState(() {
+      _filteredNotes.removeAt(index);
+    });
+  }
+
   Future<bool> _onBackPressed() async {
     if (_searchFocusNode.hasFocus) {
       _searchFocusNode.unfocus();
@@ -112,7 +118,10 @@ class _NotesPageState extends State<NotesPage> {
                 _showEmptyState
                     ? const EmptyState()
                     : Expanded(
-                        child: NoteList(notes: _filteredNotes),
+                        child: NoteList(
+                          notes: _filteredNotes,
+                          onDelete: _deleteNoteAtIndex,
+                        ),
                       ),
               ],
             ),

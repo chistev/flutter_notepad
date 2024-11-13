@@ -4,13 +4,15 @@ import 'note_detail_page.dart';
 class NoteListItem extends StatelessWidget {
   final String title;
   final String note;
-  final String date; // This is the timestamp
+  final String date;
+  final VoidCallback onDelete;
 
   const NoteListItem({
     Key? key,
     required this.title,
     required this.note,
     required this.date,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -19,18 +21,21 @@ class NoteListItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         title: Text(
-          title.isNotEmpty ? title : _getNoteExcerpt(note),  // Show title or note excerpt
+          title.isNotEmpty ? title : _getNoteExcerpt(note),
           style: const TextStyle(fontWeight: FontWeight.bold),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: Text(date), // This will display the timestamp
+        subtitle: Text(date),
         onTap: () {
-          // Navigate to the detail page
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NoteDetailPage(title: title.isNotEmpty ? title : _getNoteExcerpt(note), date: date),
+              builder: (context) => NoteDetailPage(
+                title: title.isNotEmpty ? title : _getNoteExcerpt(note),
+                date: date,
+                onDelete: onDelete, // Pass delete callback
+              ),
             ),
           );
         },
@@ -39,7 +44,6 @@ class NoteListItem extends StatelessWidget {
   }
 
   String _getNoteExcerpt(String note) {
-    // Get the first 50 characters of the note as an excerpt
     return note.length > 50 ? '${note.substring(0, 50)}...' : note;
   }
 }

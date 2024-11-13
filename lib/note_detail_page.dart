@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class NoteDetailPage extends StatefulWidget {
   final String title;
   final String date;
+  final Function onDelete; // Pass a delete callback
 
   const NoteDetailPage({
     Key? key,
     required this.title,
     required this.date,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -23,6 +25,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
     } else {
       _showShareOptions();
     }
+
     setState(() {
       _isBottomSheetVisible = !_isBottomSheetVisible;
     });
@@ -60,34 +63,44 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         );
       },
     ).whenComplete(() {
-      // Reset _isBottomSheetVisible when the BottomSheet closes
       setState(() {
         _isBottomSheetVisible = false;
       });
     });
   }
 
+  void _deleteNote() {
+    widget.onDelete(); // Call the delete callback
+    Navigator.of(context).pop(); // Go back to the previous screen
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notes', style: TextStyle(color: Colors.black)),
+        title: const Text(
+          'Notes',
+          style: TextStyle(color: Colors.black),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.green),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          // Three-dot menu (remains)
           IconButton(
             icon: const Icon(Icons.more_vert, color: Colors.grey),
             onPressed: () {
-              // Define more options functionality here
               showMenu(
                 context: context,
                 position: const RelativeRect.fromLTRB(100, 50, 0, 0),
                 items: [
                   const PopupMenuItem(value: 'option1', child: Text('Option 1')),
                   const PopupMenuItem(value: 'option2', child: Text('Option 2')),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: const Text('Delete'),
+                    onTap: _deleteNote,
+                  ),
                 ],
               );
             },
@@ -108,7 +121,11 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
             const SizedBox(height: 16),
             Text(
               'Title',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -138,7 +155,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
               ),
               IconButton(
                 icon: const Icon(Icons.share_outlined, color: Colors.grey),
-                onPressed: _toggleBottomSheet, // Toggle the bottom sheet
+                onPressed: _toggleBottomSheet,
               ),
             ],
           ),
