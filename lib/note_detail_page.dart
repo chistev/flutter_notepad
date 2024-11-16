@@ -62,22 +62,25 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.green),
-            onPressed: () {
-              showMenu(
-                context: context,
-                position: const RelativeRect.fromLTRB(100, 50, 0, 0),
-                items: [
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: const Text('Delete'),
-                    onTap: _deleteNote,
-                  ),
-                ],
-              );
-            },
-          ),
+          // Only show the three vertical dots when not in editing mode
+          if (!_isEditing)
+            IconButton(
+              icon: const Icon(Icons.more_vert, color: Colors.green),
+              onPressed: () {
+                showMenu(
+                  context: context,
+                  position: const RelativeRect.fromLTRB(100, 50, 0, 0),
+                  items: [
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: const Text('Delete'),
+                      onTap: _deleteNote,
+                    ),
+                  ],
+                );
+              },
+            ),
+          // Show the "check" icon button when in edit mode
           if (_isEditing)
             IconButton(
               icon: const Icon(Icons.check, color: Colors.green),
