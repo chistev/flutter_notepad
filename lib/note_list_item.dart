@@ -6,6 +6,7 @@ class NoteListItem extends StatelessWidget {
   final String note;
   final String date;
   final VoidCallback onDelete;
+  final Function(String title, String note) onUpdate;
 
   const NoteListItem({
     Key? key,
@@ -13,6 +14,7 @@ class NoteListItem extends StatelessWidget {
     required this.note,
     required this.date,
     required this.onDelete,
+    required this.onUpdate,
   }) : super(key: key);
 
   @override
@@ -33,8 +35,10 @@ class NoteListItem extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => NoteDetailPage(
                 title: title.isNotEmpty ? title : _getNoteExcerpt(note),
+                note: note,
                 date: date,
-                onDelete: onDelete, // Pass delete callback
+                onDelete: onDelete,
+                onUpdate: onUpdate,
               ),
             ),
           );

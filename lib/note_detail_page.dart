@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 
 class NoteDetailPage extends StatefulWidget {
   final String title;
+  final String note;
   final String date;
-  final Function onDelete; // Pass a delete callback
+  final Function onDelete;
+  final Function(String title, String note) onUpdate;
 
   const NoteDetailPage({
     Key? key,
     required this.title,
+    required this.note,
     required this.date,
     required this.onDelete,
+    required this.onUpdate,
   }) : super(key: key);
 
   @override
@@ -17,9 +21,32 @@ class NoteDetailPage extends StatefulWidget {
 }
 
 class _NoteDetailPageState extends State<NoteDetailPage> {
+  late TextEditingController _titleController;
+  late TextEditingController _noteController;
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.title);
+    _noteController = TextEditingController(text: widget.note);
+  }
+
   void _deleteNote() {
-    widget.onDelete(); // Call the delete callback
-    Navigator.of(context).pop(); // Go back to the previous screen
+    widget.onDelete();
+    Navigator.of(context).pop();
+  }
+
+  void _saveNote() {
+    widget.onUpdate(_titleController.text, _noteController.text);
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _noteController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,6 +78,11 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
               );
             },
           ),
+          if (_isEditing)
+            IconButton(
+              icon: const Icon(Icons.check, color: Colors.green),
+              onPressed: _saveNote,
+            ),
         ],
         backgroundColor: Colors.white,
         elevation: 0,
@@ -65,18 +97,45 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
               style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 16),
-            Text(
-              'Title',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isEditing = true;
+                });
+              },
+              child: TextField(
+                controller: _titleController,
+                enabled: _isEditing,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                decoration: InputDecoration(
+                  border: _isEditing ? null : InputBorder.none,
+                  hintText: 'Title',
+                ),
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              widget.title,
-              style: const TextStyle(fontSize: 18, color: Colors.black),
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isEditing = true;
+                  });
+                },
+                child: TextField(
+                  controller: _noteController,
+                  enabled: _isEditing,
+                  maxLines: null,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    border: _isEditing ? null : InputBorder.none,
+                    hintText: 'Note something down',
+                  ),
+                ),
+              ),
             ),
           ],
         ),

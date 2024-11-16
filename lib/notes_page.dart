@@ -4,6 +4,7 @@ import 'notes_page/empty_state.dart';
 import 'notes_page/note_list.dart';
 import 'search_bar.dart';
 import 'create_note_page.dart';
+import 'note_detail_page.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -19,13 +20,8 @@ class _NotesPageState extends State<NotesPage> {
 
   // Sample notes list
   final List<Map<String, String>> notes = [
-    {"title": "https://coda.partnerlinks.io/ECNUSInfor...", "date": "16:14 PM, November 11, 2024"},
-    {"title": "If I intend on building a notepad mobile...", "date": "09:32 AM, November 11, 2024"},
-    {"title": "November 5th", "date": "20:39 PM, November 10, 2024"},
-    {"title": "Third shelf", "date": "16:58 PM, November 8, 2024"},
-    {"title": "Second shelf", "date": "15:21 PM, November 8, 2024"},
-    {"title": "Top shelf", "date": "15:11 PM, November 8, 2024"},
-    {"title": "Software Development", "date": "17:47 PM, November 6, 2024"},
+    {"title": "Note 1", "note": "Sample note", "date": "16:14 PM, November 11, 2024"},
+    {"title": "Note 2", "note": "Another sample note", "date": "09:32 AM, November 11, 2024"},
   ];
 
   List<Map<String, String>> _filteredNotes = [];
@@ -62,11 +58,9 @@ class _NotesPageState extends State<NotesPage> {
     super.dispose();
   }
 
-  // Function to add a new note at the top of the list
   void _addNewNote(Map<String, String> newNote) {
     setState(() {
       final formattedDate = DateFormat('hh:mm a, MMMM dd, yyyy').format(DateTime.now());
-
       _filteredNotes.insert(0, {
         'title': newNote['title'] ?? '',
         'note': newNote['note'] ?? '',
@@ -75,72 +69,67 @@ class _NotesPageState extends State<NotesPage> {
     });
   }
 
-  // Function to delete a note by index
+  void _updateNoteAtIndex(int index, String title, String note) {
+    setState(() {
+      _filteredNotes[index]['title'] = title;
+      _filteredNotes[index]['note'] = note;
+    });
+  }
+
   void _deleteNoteAtIndex(int index) {
     setState(() {
       _filteredNotes.removeAt(index);
     });
   }
 
-  Future<bool> _onBackPressed() async {
-    if (_searchFocusNode.hasFocus) {
-      _searchFocusNode.unfocus();
-      return Future.value(false);
-    }
-    return Future.value(true);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Notes'),
-          centerTitle: true,
-        ),
-        body: GestureDetector(
-          onTap: () {
-            if (_searchFocusNode.hasFocus) {
-              FocusScope.of(context).requestFocus(FocusNode());
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                SearchBar(
-                  controller: _searchController,
-                  focusNode: _searchFocusNode,
-                  showEmptyState: _showEmptyState,
-                ),
-                const SizedBox(height: 16),
-                _showEmptyState
-                    ? const EmptyState()
-                    : Expanded(
-                        child: NoteList(
-                          notes: _filteredNotes,
-                          onDelete: _deleteNoteAtIndex,
-                        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Notes'),
+        centerTitle: true,
+      ),
+      body: GestureDetector(
+        onTap: () {
+          if (_searchFocusNode.hasFocus) {
+            FocusScope.of(context).requestFocus(FocusNode());
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              SearchBar(
+                controller: _searchController,
+                focusNode: _searchFocusNode,
+                showEmptyState: _showEmptyState,
+              ),
+              const SizedBox(height: 16),
+              _showEmptyState
+                  ? const EmptyState()
+                  : Expanded(
+                      child: NoteList(
+                        notes: _filteredNotes,
+                        onDelete: _deleteNoteAtIndex,
+                        onUpdate: _updateNoteAtIndex, // Pass the onUpdate callback here
                       ),
-              ],
-            ),
+                    ),
+            ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CreateNotePage()),
-            );
-
-            if (result != null) {
-              _addNewNote(result);
-            }
-          },
-          tooltip: 'Add Note',
-          child: const Icon(Icons.add),
-        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateNotePage()),
+          );
+          if (result != null) {
+            _addNewNote(result);
+          }
+        },
+        tooltip: 'Add Note',
+        child: const Icon(Icons.add),
       ),
     );
   }

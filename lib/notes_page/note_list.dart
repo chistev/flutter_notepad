@@ -4,11 +4,13 @@ import '../note_list_item.dart';
 class NoteList extends StatelessWidget {
   final List<Map<String, String>> notes;
   final Function(int index) onDelete;
+  final Function(int index, String title, String note) onUpdate; // Added onUpdate
 
   const NoteList({
     Key? key,
     required this.notes,
     required this.onDelete,
+    required this.onUpdate, // Added onUpdate in constructor
   }) : super(key: key);
 
   @override
@@ -21,6 +23,7 @@ class NoteList extends StatelessWidget {
           note: notes[index]['note'] ?? '',
           date: notes[index]['date'] ?? '',
           onDelete: () => onDelete(index), // Pass the delete function with the index
+          onUpdate: (title, note) => onUpdate(index, title, note), // Pass the update function with the index
         );
       },
     );
