@@ -112,7 +112,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   color: Colors.black,
                 ),
                 decoration: InputDecoration(
-                  border: _isEditing ? null : InputBorder.none,
+                  border: _isEditing ? InputBorder.none : InputBorder.none, // Explicitly set InputBorder.none
                   hintText: 'Title',
                 ),
               ),
@@ -131,7 +131,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   decoration: InputDecoration(
-                    border: _isEditing ? null : InputBorder.none,
+                    border: _isEditing ? InputBorder.none : InputBorder.none, // Explicitly set InputBorder.none
                     hintText: 'Note something down',
                   ),
                 ),
