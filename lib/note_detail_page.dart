@@ -39,7 +39,9 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
   void _saveNote() {
     widget.onUpdate(_titleController.text, _noteController.text);
-    Navigator.of(context).pop();
+    setState(() {
+      _isEditing = false;  // Exit edit mode but don't navigate back
+    });
   }
 
   @override
@@ -59,7 +61,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(context).pop(),  // Navigate back
         ),
         actions: [
           // Only show the three vertical dots when not in editing mode
