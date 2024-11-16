@@ -4,7 +4,6 @@ import 'notes_page/empty_state.dart';
 import 'notes_page/note_list.dart';
 import 'search_bar.dart';
 import 'create_note_page.dart';
-import 'note_detail_page.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -71,7 +70,6 @@ class _NotesPageState extends State<NotesPage> {
 
   void _updateNoteAtIndex(int index, String title, String note) {
     setState(() {
-      // Update the note's title and content
       _filteredNotes[index]['title'] = title;
       _filteredNotes[index]['note'] = note;
 

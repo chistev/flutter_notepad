@@ -36,9 +36,11 @@ class NoteListItem extends StatelessWidget {
               builder: (context) => NoteDetailPage(
                 title: title.isNotEmpty ? title : _getNoteExcerpt(note),
                 note: note,
-                date: date,
+                date: date, // Pass the date here
                 onDelete: onDelete,
-                onUpdate: onUpdate,
+                onUpdate: (newTitle, newNote) {
+                  onUpdate(newTitle, newNote); // Update the note through onUpdate
+                },
               ),
             ),
           );
@@ -51,3 +53,4 @@ class NoteListItem extends StatelessWidget {
     return note.length > 50 ? '${note.substring(0, 50)}...' : note;
   }
 }
+  

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NoteDetailPage extends StatefulWidget {
   final String title;
   final String note;
-  final String date;
+  String date; // Mutable, so we can update this
   final Function onDelete;
   final Function(String title, String note) onUpdate;
 
-  const NoteDetailPage({
+  // Removed 'const' keyword since the constructor is not constant
+  NoteDetailPage({
     Key? key,
     required this.title,
     required this.note,
@@ -40,7 +42,8 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   void _saveNote() {
     widget.onUpdate(_titleController.text, _noteController.text);
     setState(() {
-      _isEditing = false;  // Exit edit mode but don't navigate back
+      widget.date = DateFormat('hh:mm a, MMMM dd, yyyy').format(DateTime.now()); // Update the date when saving
+      _isEditing = false;
     });
   }
 
@@ -55,16 +58,12 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Notes',
-          style: TextStyle(color: Colors.black),
-        ),
+        title: const Text('Notes', style: TextStyle(color: Colors.black)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.of(context).pop(),  // Navigate back
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          // Only show the three vertical dots when not in editing mode
           if (!_isEditing)
             IconButton(
               icon: const Icon(Icons.more_vert, color: Colors.green),
@@ -82,7 +81,6 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                 );
               },
             ),
-          // Show the "check" icon button when in edit mode
           if (_isEditing)
             IconButton(
               icon: const Icon(Icons.check, color: Colors.green),
@@ -97,10 +95,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.date,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
+            Text(widget.date, style: const TextStyle(fontSize: 14, color: Colors.grey)),
             const SizedBox(height: 16),
             GestureDetector(
               onTap: () {
@@ -111,15 +106,8 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
               child: TextField(
                 controller: _titleController,
                 enabled: _isEditing,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                decoration: InputDecoration(
-                  border: _isEditing ? InputBorder.none : InputBorder.none, // Explicitly set InputBorder.none
-                  hintText: 'Title',
-                ),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                decoration: InputDecoration(border: _isEditing ? InputBorder.none : InputBorder.none, hintText: 'Title'),
               ),
             ),
             const SizedBox(height: 8),
@@ -135,10 +123,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
                   enabled: _isEditing,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
-                    border: _isEditing ? InputBorder.none : InputBorder.none, // Explicitly set InputBorder.none
-                    hintText: 'Note something down',
-                  ),
+                  decoration: InputDecoration(border: _isEditing ? InputBorder.none : InputBorder.none, hintText: 'Note something down'),
                 ),
               ),
             ),
@@ -151,18 +136,9 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              IconButton(
-                icon: const Icon(Icons.photo_album_outlined, color: Colors.grey),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.check_circle_outline, color: Colors.grey),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: Colors.grey),
-                onPressed: () {},
-              ),
+              IconButton(icon: const Icon(Icons.photo_album_outlined, color: Colors.grey), onPressed: () {}),
+              IconButton(icon: const Icon(Icons.check_circle_outline, color: Colors.grey), onPressed: () {}),
+              IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.grey), onPressed: () {}),
             ],
           ),
         ),
