@@ -71,8 +71,13 @@ class _NotesPageState extends State<NotesPage> {
 
   void _updateNoteAtIndex(int index, String title, String note) {
     setState(() {
+      // Update the note's title and content
       _filteredNotes[index]['title'] = title;
       _filteredNotes[index]['note'] = note;
+
+      // Update the date with the current date and time
+      final formattedDate = DateFormat('hh:mm a, MMMM dd, yyyy').format(DateTime.now());
+      _filteredNotes[index]['date'] = formattedDate;
     });
   }
 
