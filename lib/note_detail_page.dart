@@ -8,7 +8,6 @@ class NoteDetailPage extends StatefulWidget {
   final Function onDelete;
   final Function(String title, String note) onUpdate;
 
-  // Removed 'const' keyword since the constructor is not constant
   NoteDetailPage({
     Key? key,
     required this.title,

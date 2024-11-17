@@ -17,7 +17,6 @@ class _NotesPageState extends State<NotesPage> {
   final TextEditingController _searchController = TextEditingController();
   bool _showEmptyState = false;
 
-  // Sample notes list
   final List<Map<String, String>> notes = [
     {"title": "Note 1", "note": "Sample note", "date": "16:14 PM, November 11, 2024"},
     {"title": "Note 2", "note": "Another sample note", "date": "09:32 AM, November 11, 2024"},
@@ -72,10 +71,12 @@ class _NotesPageState extends State<NotesPage> {
     setState(() {
       _filteredNotes[index]['title'] = title;
       _filteredNotes[index]['note'] = note;
-
-      // Update the date with the current date and time
       final formattedDate = DateFormat('hh:mm a, MMMM dd, yyyy').format(DateTime.now());
       _filteredNotes[index]['date'] = formattedDate;
+
+      // Move the updated note to the top of the list
+      final updatedNote = _filteredNotes.removeAt(index);
+      _filteredNotes.insert(0, updatedNote);
     });
   }
 
@@ -114,7 +115,7 @@ class _NotesPageState extends State<NotesPage> {
                       child: NoteList(
                         notes: _filteredNotes,
                         onDelete: _deleteNoteAtIndex,
-                        onUpdate: _updateNoteAtIndex, // Pass the onUpdate callback here
+                        onUpdate: _updateNoteAtIndex,
                       ),
                     ),
             ],

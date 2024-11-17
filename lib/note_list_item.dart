@@ -53,4 +53,3 @@ class NoteListItem extends StatelessWidget {
     return note.length > 50 ? '${note.substring(0, 50)}...' : note;
   }
 }
-  
