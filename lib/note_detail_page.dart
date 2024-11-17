@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NoteDetailPage extends StatefulWidget {
   final String title;
@@ -44,6 +45,16 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       widget.date = DateFormat('hh:mm a, MMMM dd, yyyy').format(DateTime.now()); // Update the date when saving
       _isEditing = false;
     });
+  }
+
+  // Updated _launchURL method
+  Future<void> _launchURL() async {
+    final Uri url = Uri.parse('https://www.buymeacoffee.com/chistev12');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -132,13 +143,19 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       bottomNavigationBar: BottomAppBar(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(icon: const Icon(Icons.photo_album_outlined, color: Colors.grey), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.check_circle_outline, color: Colors.grey), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.grey), onPressed: () {}),
-            ],
+          child: GestureDetector(
+            onTap: _launchURL,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.coffee, color: Colors.brown, size: 28), // Coffee icon
+                const SizedBox(width: 8),
+                const Text(
+                  'Buy Me A Coffee',
+                  style: TextStyle(color: Colors.brown, fontSize: 16),
+                ),
+              ],
+            ),
           ),
         ),
       ),
