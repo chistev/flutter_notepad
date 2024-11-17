@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'note_detail_page/app_bar_widget.dart';
+import 'note_detail_page/bottom_app_bar_widget.dart';
+import 'note_detail_page/editable_text_field.dart';
+
 class NoteDetailPage extends StatefulWidget {
   final String title;
   final String note;
-  String date; // Mutable, so we can update this
+  String date;
   final Function onDelete;
   final Function(String title, String note) onUpdate;
 
@@ -67,38 +71,15 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notes', style: TextStyle(color: Colors.black)),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: [
-          if (!_isEditing)
-            IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.green),
-              onPressed: () {
-                showMenu(
-                  context: context,
-                  position: const RelativeRect.fromLTRB(100, 50, 0, 0),
-                  items: [
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: const Text('Delete'),
-                      onTap: _deleteNote,
-                    ),
-                  ],
-                );
-              },
-            ),
-          if (_isEditing)
-            IconButton(
-              icon: const Icon(Icons.check, color: Colors.green),
-              onPressed: _saveNote,
-            ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: AppBarWidget(
+        isEditing: _isEditing,
+        onEdit: () {
+          setState(() {
+            _isEditing = true;
+          });
+        },
+        onSave: _saveNote,
+        onDelete: _deleteNote,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -107,58 +88,37 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
           children: [
             Text(widget.date, style: const TextStyle(fontSize: 14, color: Colors.grey)),
             const SizedBox(height: 16),
-            GestureDetector(
+            // Pass custom style to make the title bold
+            EditableTextField(
+              controller: _titleController,
+              hintText: 'Title',
+              isEditing: _isEditing,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black), // Bold title
               onTap: () {
                 setState(() {
-                  _isEditing = true;
+                  _isEditing = true; // Enable editing when tapped
                 });
               },
-              child: TextField(
-                controller: _titleController,
-                enabled: _isEditing,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-                decoration: InputDecoration(border: _isEditing ? InputBorder.none : InputBorder.none, hintText: 'Title'),
-              ),
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: GestureDetector(
+              child: EditableTextField(
+                controller: _noteController,
+                hintText: 'Note something down',
+                isEditing: _isEditing,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
                 onTap: () {
                   setState(() {
-                    _isEditing = true;
+                    _isEditing = true; // Enable editing when tapped
                   });
                 },
-                child: TextField(
-                  controller: _noteController,
-                  enabled: _isEditing,
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(border: _isEditing ? InputBorder.none : InputBorder.none, hintText: 'Note something down'),
-                ),
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-          child: GestureDetector(
-            onTap: _launchURL,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.coffee, color: Colors.brown, size: 28), // Coffee icon
-                const SizedBox(width: 8),
-                const Text(
-                  'Buy Me A Coffee',
-                  style: TextStyle(color: Colors.brown, fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      bottomNavigationBar: BottomAppBarWidget(onTap: _launchURL),
     );
   }
 }
