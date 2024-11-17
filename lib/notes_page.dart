@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'notes_page/empty_state.dart';
 import 'notes_page/note_list.dart';
-import 'search_bar.dart';
+import 'search_bar.dart' as custom_search_bar;
 import 'create_note_page.dart';
 
 class NotesPage extends StatefulWidget {
@@ -103,7 +103,7 @@ class _NotesPageState extends State<NotesPage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              SearchBar(
+              custom_search_bar.SearchBar(
                 controller: _searchController,
                 focusNode: _searchFocusNode,
                 showEmptyState: _showEmptyState,
